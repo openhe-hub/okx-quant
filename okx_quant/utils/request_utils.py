@@ -8,7 +8,7 @@ from urllib.parse import urljoin
 from enum import Enum
 from typing import Union
 
-from config_utils import ConfigUtils, APIConfig
+from okx_quant.utils.config_utils import ConfigUtils, APIConfig
 
 
 class RequestMethod(Enum):
@@ -27,6 +27,7 @@ class RequestUtils:
             query: str = "&".join(
                 ["{}={}".format(k, params[k]) for k in sorted(params.keys())]
             )
+            uri += "?" + query
         url: str = urljoin(self.api_config.base_url, uri)
 
         if auth:
@@ -39,7 +40,7 @@ class RequestUtils:
                 body: str = json.dumps(body)
             else:
                 body: str = ""
-            message: str = str(timestamp) + str.upper(method.value()) + uri + str(body)
+            message: str = str(timestamp) + str.upper(method.value) + uri + str(body)
             mac: hmac.HMAC = hmac.new(
                 bytes(self.api_config.secret_key, encoding="utf-8"),
                 bytes(message, encoding="utf-8"),
@@ -56,7 +57,7 @@ class RequestUtils:
             headers["OK-ACCESS-TIMESTAMP"] = str(timestamp)
             headers["OK-ACCESS-PASSPHRASE"] = self.api_config.passphrase
 
-        result: dict = requests.request(method.value(), url, data=body, headers=headers, timeout=10).json()
+        result: dict = requests.request(method.value, url, data=body, headers=headers, timeout=10).json()
         if result.get('code') and result.get('code') != '0':
             return None
         return result

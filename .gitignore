@@ -1,3 +1,6 @@
 .venv
 .idea
 config/api.toml
+build
+dist
+okx_quant.egg-info
