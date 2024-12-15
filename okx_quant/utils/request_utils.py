@@ -15,6 +15,9 @@ class RequestMethod(Enum):
     GET: str = 'GET'
     POST: str = 'POST'
 
+class AccountStatus(Enum):
+    Trade: str = 'TRADE'
+    Demo: str = 'DEMO'
 
 class RequestUtils:
     def __init__(self, api_config: APIConfig, config: dict):
@@ -22,7 +25,8 @@ class RequestUtils:
         self.config: dict = config
 
     def request(self, method: RequestMethod, uri: str, params: dict = None,
-                body: dict = None, headers: dict = None, auth: bool = False) -> Union[dict, None]:
+                body: dict = None, headers: dict = None, auth: bool = False, 
+                account_status: AccountStatus = AccountStatus.Trade) -> Union[dict, None]:
         if params:
             query: str = "&".join(
                 ["{}={}".format(k, params[k]) for k in sorted(params.keys())]

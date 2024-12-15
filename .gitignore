@@ -1,6 +1,9 @@
 .venv
 .idea
+.vscode
 config/api.toml
+config/demo_api.toml
 build
 dist
 okx_quant.egg-info
+**/__pycache__/
