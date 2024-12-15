@@ -1,8 +1,7 @@
 .venv
 .idea
 .vscode
-config/api.toml
-config/demo_api.toml
+config/**
 build
 dist
 okx_quant.egg-info

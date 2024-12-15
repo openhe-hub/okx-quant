@@ -60,6 +60,9 @@ class RequestUtils:
             headers["OK-ACCESS-SIGN"] = sign
             headers["OK-ACCESS-TIMESTAMP"] = str(timestamp)
             headers["OK-ACCESS-PASSPHRASE"] = self.api_config.passphrase
+            # add special header for demo mode
+            if account_status == AccountStatus.Demo:
+                headers["x-simulated-trading"] = '1'
 
         result: dict = requests.request(method.value, url, data=body, headers=headers, timeout=10).json()
         if result.get('code') and result.get('code') != '0':
