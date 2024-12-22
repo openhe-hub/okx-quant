@@ -71,7 +71,7 @@ class Future:
                                           account_status=self.account_status)
         return resp
 
-    def query_position_by_future(self, future_id: str) -> Union[Dict, None]:
+    def query_position(self, future_id: str) -> Union[Dict, None]:
         params = {
             "instId": future_id
         }
@@ -79,6 +79,12 @@ class Future:
         resp = self.request_utils.request(
             RequestMethod.GET, "/api/v5/account/positions", params=params, auth=True, account_status=self.account_status)
         return resp
+
+    def has_position(self, future_id: str) -> bool:
+        resp = self.query_position(future_id)
+        px_str = resp['data'][0]['avgPx']
+        px = float(px_str) if px_str != "" else 0.0
+        return px > 0.0
 
     def close_position(self, future_id: str,
                        margin_type: MarginType = MarginType.ISOLATED,
@@ -118,7 +124,47 @@ class Future:
 
         if ccy != 'USDT':
             params['ccy'] = ccy
-        
+
         resp = self.request_utils.request(
             RequestMethod.POST, "/api/v5/account/position/margin-balance", body=params, auth=True, account_status=self.account_status)
+        return resp
+
+    def get_max_trade_size(self, future_id: str, lever: float = -1, order_price: float = -1,
+                        margin_type: MarginType = MarginType.ISOLATED) -> Union[Dict, None]:
+        params = {
+            "instId": future_id,
+            "tdMode": margin_type.value,
+        }
+
+        if order_price != -1:
+            params["px"] = f"{order_price: 10f}"
+
+        if lever != -1:
+            self.set_future_lever(future_id, lever)
+
+        resp = self.request_utils.request(
+            RequestMethod.GET, "/api/v5/account/max-size",
+            params=params,
+            auth=True,
+            account_status=self.account_status
+        )
+        return resp
+
+    def get_max_margin(self, future_id: str,
+                order_price: float = -1,
+                margin_type: MarginType = MarginType.ISOLATED) -> Union[Dict, None]:
+        params = {
+            "instId": future_id,
+            "tdMode": margin_type.value,
+        }
+
+        if order_price != -1:
+            params["px"] = f"{order_price: 10f}"
+        
+        resp = self.request_utils.request(
+            RequestMethod.GET, "/api/v5/account/max-avail-size",
+            params=params,
+            auth=True,
+            account_status=self.account_status
+        )
         return resp

@@ -66,5 +66,7 @@ class RequestUtils:
 
         result: dict = requests.request(method.value, url, data=body, headers=headers, timeout=10).json()
         if result.get('code') and result.get('code') != '0':
+            print(f"Err occurs while requesting {uri}: ")
+            print(result)
             return None
         return result
