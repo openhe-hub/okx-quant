@@ -2,7 +2,7 @@ from typing import Union, Dict
 from enum import Enum
 
 from okx_quant.utils.config_utils import APIConfig, ConfigUtils
-from okx_quant.utils.request_utils import RequestUtils, RequestMethod
+from okx_quant.utils.request_utils import RequestUtils, RequestMethod, AccountStatus
 
 class TransferType(Enum):
     NORMAL = "0"
@@ -21,12 +21,15 @@ class Account:
         self.api_config: APIConfig = api_config
         self.config: dict = config
         self.request_utils: RequestUtils = RequestUtils(api_config, config)
+        self.account_status: AccountStatus = AccountStatus.Demo if config[
+            'mode']['demo'] else AccountStatus.Trade
 
     def get_balance(self, currency: str) -> Union[Dict, None]:
         params = {"ccy": currency}
         uri = "/api/v5/account/balance"
         result = self.request_utils.request(
-            RequestMethod.GET, uri=uri, params=params, auth=True
+            RequestMethod.GET, uri=uri, params=params, auth=True,
+            account_status=self.account_status
         )
         return result
     
@@ -36,7 +39,8 @@ class Account:
         }
         uri = "/api/v5/asset/asset-valuation"
         result = self.request_utils.request(
-            RequestMethod.GET, uri=uri, params=params, auth=True
+            RequestMethod.GET, uri=uri, params=params, auth=True,
+            account_status=self.account_status
         )
         return result
     
@@ -58,6 +62,7 @@ class Account:
         
         uri = "/api/v5/asset/transfer"
         result = self.request_utils.request(
-            RequestMethod.POST, uri=uri, body=params, auth=True
+            RequestMethod.POST, uri=uri, body=params, auth=True,
+            account_status=self.account_status
         )
         return result

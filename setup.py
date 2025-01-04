@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="okx_quant",
-    version="0.0.12",
+    version="0.0.13",
     packages=find_packages(),
     author="openhe",
     author_email="hezhewen2004@gmail.com",
